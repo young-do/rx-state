@@ -1,4 +1,4 @@
-import { createAction } from 'rxjs-store-core';
+import { createAction } from 'rx-state';
 import type { Todo } from './states';
 
 export const AddTodo = createAction<Todo['text']>('AddTodo');

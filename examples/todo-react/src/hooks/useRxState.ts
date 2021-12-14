@@ -1,4 +1,4 @@
-import { RxState } from 'rxjs-store-core';
+import { RxState } from 'rx-state';
 import { useEffect, useState } from 'react';
 
 export const useRxState = <T>(rxState: RxState<T>) => {

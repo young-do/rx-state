@@ -1,5 +1,5 @@
 {
-  "name": "svelte-ts-template",
+  "name": "todo-svelte",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "rxjs": "^7.4.0",
-    "rxjs-store-core": "*",
+    "rx-state": "*",
     "todomvc-app-css": "^2.4.1",
     "todomvc-common": "^1.0.5"
   },

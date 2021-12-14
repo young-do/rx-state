@@ -1,5 +1,5 @@
 <script lang="ts">
-import { dispatch } from 'rxjs-store-core';
+import { dispatch } from 'rx-state';
 import { onMount } from 'svelte';
 import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './store/action';
 import { Todo, todoList$ } from './store/states';

@@ -1,7 +1,7 @@
 {
-  "name": "rxjs-store",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ]
 }

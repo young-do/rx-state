@@ -7,38 +7,32 @@ export type Todo = {
   text: string;
 };
 
-export const todoList$ = reducer<Todo[]>([], todoList$ => {
+export const todoList$ = reducer<Todo[]>([], '[todoList]', todoList$ => {
   let id = 0;
 
-  todoList$.subscribe(todo => console.error(todo));
-
   on(AddTodo).subscribe(text => {
-    todoList$.set(
-      todoList$.value.concat({
-        id: id++,
-        status: 'active',
-        text,
-      }),
-    );
+    const next = todoList$.value.concat({
+      id: id++,
+      status: 'active',
+      text,
+    });
+    todoList$.set(next);
   });
 
   on(DeleteTodoList).subscribe(deleteIdList => {
-    todoList$.set(todoList$.value.filter(todo => !deleteIdList.includes(todo.id)));
+    const next = todoList$.value.filter(todo => !deleteIdList.includes(todo.id));
+    todoList$.set(next);
   });
 
   on(ChangeTodoListStatus).subscribe(selectedTodoList => {
-    todoList$.set(
-      todoList$.value.map(todo => {
-        const selected = selectedTodoList.find(selected => selected.id === todo.id);
-
-        if (selected) {
-          return {
-            ...todo,
-            status: selected.status,
-          };
-        }
-        return todo;
-      }),
-    );
+    const next = todoList$.value.map(todo => {
+      const selected = selectedTodoList.find(selected => selected.id === todo.id);
+      if (!selected) return todo;
+      return {
+        ...todo,
+        status: selected.status,
+      };
+    });
+    todoList$.set(next);
   });
 });

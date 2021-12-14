@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "rxjs": "^7.4.0",
-    "rx-state": "*",
+    "@youngdo/rx-state": "*",
     "todomvc-app-css": "^2.4.1",
     "todomvc-common": "^1.0.5"
   },

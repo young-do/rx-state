@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRxValue } from './hooks/useRxState';
 import { Todo, todoList$ } from './store/states';
-import { dispatch } from 'rx-state';
+import { dispatch } from '@youngdo/rx-state';
 import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './store/action';
 
 function App() {

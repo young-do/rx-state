@@ -1,4 +1,4 @@
-import { on, reducer } from 'rx-state';
+import { on, reducer } from '@youngdo/rx-state';
 import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './action';
 
 export type Todo = {

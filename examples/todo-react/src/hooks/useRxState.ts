@@ -1,4 +1,4 @@
-import { RxState } from 'rx-state';
+import { RxState } from '@youngdo/rx-state';
 import { useEffect, useState } from 'react';
 
 export const useRxState = <T>(rxState: RxState<T>) => {

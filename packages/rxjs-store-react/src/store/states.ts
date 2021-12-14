@@ -1,7 +1,38 @@
 import { on, reducer } from 'rxjs-store-core';
-import { Increase, Decrease } from './actions';
+import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './action';
 
-export const count$ = reducer(0, undefined, () => {
-  on(Increase).subscribe(() => count$.set(count$.value + 1));
-  on(Decrease).subscribe(() => count$.set(count$.value - 1));
+export type Todo = {
+  id: number;
+  status: 'active' | 'completed';
+  text: string;
+};
+
+export const todoList$ = reducer<Todo[]>([], '[todoList]', todoList$ => {
+  let id = 0;
+
+  on(AddTodo).subscribe(text => {
+    const next = todoList$.value.concat({
+      id: id++,
+      status: 'active',
+      text,
+    });
+    todoList$.set(next);
+  });
+
+  on(DeleteTodoList).subscribe(deleteIdList => {
+    const next = todoList$.value.filter(todo => !deleteIdList.includes(todo.id));
+    todoList$.set(next);
+  });
+
+  on(ChangeTodoListStatus).subscribe(selectedTodoList => {
+    const next = todoList$.value.map(todo => {
+      const selected = selectedTodoList.find(selected => selected.id === todo.id);
+      if (!selected) return todo;
+      return {
+        ...todo,
+        status: selected.status,
+      };
+    });
+    todoList$.set(next);
+  });
 });

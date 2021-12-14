@@ -12,17 +12,24 @@ class State<T> extends BehaviorSubject<T> {
     this.next(nextValue);
   }
 }
-export const state = <T>(initValue: T, name?: string) => {
+
+export type RxState<T> = State<T>;
+
+export const createState = <T>(initValue: T, name?: string) => {
   return new State(initValue, name);
 };
 
-export const reducer = <T>(initValue: T, name: string | undefined, callback: (state: State<T>) => void): State<T> => {
-  const _state = state(initValue, name);
-  callback(_state);
-  return _state;
+export const reducer = <T>(
+  initValue: T,
+  name: string | undefined,
+  callback: (state: RxState<T>) => void,
+): RxState<T> => {
+  const state = createState(initValue, name);
+  callback(state);
+  return state;
 };
 
-export const selector = <S, T>(state: State<T>, select: (value: T) => S) => {
+export const selector = <S, T>(state: RxState<T>, select: (value: T) => S) => {
   return new Observable<S>(subscriber => {
     state.subscribe({
       next(value) {

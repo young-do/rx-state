@@ -11,14 +11,20 @@ npm install rxjs @youngdo/rx-state
 yarn add rxjs @youngdo/rx-state
 ```
 
+## Example (Simple Counter)
+
 ### setup
 
 ```ts
 // action.ts
+import { createAction } from '@youngdo/rx-state';
+
 export const INCREASE = createAction<void>('INCREASE');
 export const DECREASE = createAction<void>('DECREASE');
 
 // state.ts
+import { reducer, on } from '@youngdo/rx-state';
+
 export const count$ = reducer<number>(0, 'count$', count$ => {
   on(INCREASE).subscribe(() => count$.set(count$.value + 1));
   on(DECREASE).subscribe(() => count$.set(count$.value - 1));
@@ -30,6 +36,8 @@ export const count$ = reducer<number>(0, 'count$', count$ => {
 💡 useRxState code at [here](../../examples/todo-react/src/hooks/useRxState.ts).
 
 ```jsx
+import { dispatch } from '@youngdo/rx-state';
+
 import { count$ } from 'state';
 import { INCREASE, DECREASE } from 'action';
 import { useRxValue } from 'hooks';

@@ -1,6 +1,6 @@
 {
   "name": "@youngdo/rx-state",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "State management library by using Rxjs.",
   "homepage": "https://github.com/young-do/rx-state#readme",
   "bugs": {

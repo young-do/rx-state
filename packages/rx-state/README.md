@@ -1,6 +1,6 @@
 # @youngdo/rx-state
 
-State management library by using [Rxjs](https://github.com/ReactiveX/rxjs), and inspired by [adorable]https://github.com/developer-1px/adorable)
+State management library by using [Rxjs](https://github.com/ReactiveX/rxjs), and inspired by [adorable](https://github.com/developer-1px/adorable)
 
 ## Getting started
 

@@ -27,7 +27,7 @@ export const count$ = reducer<number>(0, 'count$', count$ => {
 
 ### on React
 
-💡 useRxState code at [here](./examples/todo-react/src/hooks/useRxState.ts).
+💡 useRxState code at [here](../../examples/todo-react/src/hooks/useRxState.ts).
 
 ```jsx
 import { count$ } from 'state';

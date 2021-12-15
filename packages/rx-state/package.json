@@ -3,9 +3,11 @@
   "version": "0.0.1",
   "license": "MIT",
   "main": "dist/index.js",
+  "author": "Young-do Cho <yd19932@gmail.com> (https://github.com/young-do)",
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf ./dist"
+    "clean": "rm -rf ./dist",
+    "prepare": "yarn clean && yarn build"
   },
   "dependencies": {
     "rxjs": "^7.4.0"

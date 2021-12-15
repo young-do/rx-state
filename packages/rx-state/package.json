@@ -1,9 +1,18 @@
 {
   "name": "@youngdo/rx-state",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "description": "State management library by using Rxjs.",
+  "homepage": "https://github.com/young-do/rx-state#readme",
+  "bugs": {
+    "url": "https://github.com/young-do/rx-state/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/young-do/rx-state.git"
+  },
   "license": "MIT",
-  "main": "dist/index.js",
   "author": "Young-do Cho <yd19932@gmail.com> (https://github.com/young-do)",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf ./dist",

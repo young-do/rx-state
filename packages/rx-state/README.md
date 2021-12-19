@@ -7,8 +7,8 @@ State management library by using [Rxjs](https://github.com/ReactiveX/rxjs), and
 ### install
 
 ```
-npm install rxjs @youngdo/rx-state
-yarn add rxjs @youngdo/rx-state
+npm install @youngdo/rx-state
+yarn add @youngdo/rx-state
 ```
 
 ## Example (Simple Counter)

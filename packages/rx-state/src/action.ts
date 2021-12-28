@@ -6,16 +6,21 @@ type Action<T = void> = {
 };
 
 const actionManager = {
-  map: {} as Record<string, Subject<any>>,
+  map: {} as Record<string, Subject<unknown>>,
+  toKey(name: string) {
+    return `#${name ?? ''}`;
+  },
   get(name: string) {
-    const subject = this.map[name];
+    const key = this.toKey(name);
+    const subject = this.map[key];
     if (!subject) throw new Error(`Action ${name} has not been declared yet.`);
     return subject;
   },
   set(name: string) {
+    const key = this.toKey(name);
     const subject = new Subject();
-    if (this.map[name]) console.warn(`Action ${name} already exists.`);
-    return (this.map[name] = subject);
+    if (this.map[key]) console.warn(`Action ${name} already exists.`);
+    return (this.map[key] = subject);
   },
 };
 

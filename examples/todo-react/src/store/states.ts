@@ -1,4 +1,4 @@
-import { on, reducer } from '@youngdo/rx-state';
+import { on, atom } from '@youngdo/rx-state';
 import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './action';
 
 export type Todo = {
@@ -7,7 +7,7 @@ export type Todo = {
   text: string;
 };
 
-export const todoList$ = reducer<Todo[]>([], '[todoList]', todoList$ => {
+export const todoList$ = atom<Todo[]>([], todoList$ => {
   let id = 0;
 
   on(AddTodo).subscribe(text => {

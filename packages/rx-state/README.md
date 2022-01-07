@@ -23,9 +23,9 @@ export const INCREASE = createAction<void>('INCREASE');
 export const DECREASE = createAction<void>('DECREASE');
 
 // state.ts
-import { reducer, on } from '@youngdo/rx-state';
+import { atom, on } from '@youngdo/rx-state';
 
-export const count$ = reducer<number>(0, 'count$', count$ => {
+export const count$ = atom<number>(0, count$ => {
   on(INCREASE).subscribe(() => count$.set(count$.value + 1));
   on(DECREASE).subscribe(() => count$.set(count$.value - 1));
 });

@@ -1,31 +1,19 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 
 class State<T> extends BehaviorSubject<T> {
-  constructor(value: T, private name?: string) {
+  constructor(value: T) {
     super(value);
   }
   set(nextValue: T): void {
-    if (this.name) {
-      const prevValue = this.value;
-      console.log(this.name, prevValue, '->', nextValue);
-    }
     this.next(nextValue);
   }
 }
 
 export type RxState<T> = State<T>;
 
-export const createState = <T>(initValue: T, name?: string) => {
-  return new State(initValue, name);
-};
-
-export const reducer = <T>(
-  initValue: T,
-  name: string | undefined,
-  callback: (state: RxState<T>) => void,
-): RxState<T> => {
-  const state = createState(initValue, name);
-  callback(state);
+export const atom = <T>(initValue: T, reducerCallback?: (state: RxState<T>) => void) => {
+  const state = new State(initValue);
+  reducerCallback?.(state);
   return state;
 };
 

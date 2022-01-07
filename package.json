@@ -1,6 +1,6 @@
 {
   "name": "@youngdo/rx-state",
-  "version": "0.0.5",
+  "version": "0.1.0-alpha.1",
   "description": "State management library by using Rxjs.",
   "homepage": "https://github.com/young-do/rx-state#readme",
   "bugs": {
@@ -22,6 +22,7 @@
     "rxjs": "7.4.0"
   },
   "devDependencies": {
+    "nanoid": "^3.1.30",
     "prettier": "^2.5.1",
     "typescript": "4.5.4"
   }

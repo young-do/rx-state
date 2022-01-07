@@ -19,8 +19,8 @@ yarn add @youngdo/rx-state
 // action.ts
 import { createAction } from '@youngdo/rx-state';
 
-export const INCREASE = createAction<void>('INCREASE');
-export const DECREASE = createAction<void>('DECREASE');
+export const INCREASE = createAction<void>();
+export const DECREASE = createAction<void>();
 
 // state.ts
 import { atom, on } from '@youngdo/rx-state';
@@ -33,7 +33,7 @@ export const count$ = atom<number>(0, count$ => {
 
 ### on React
 
-💡 useRxState code at [here](../../examples/todo-react/src/hooks/useRxState.ts).
+💡 useRxState code at [here](./examples/todo-react/src/hooks/useRxState.ts).
 
 ```jsx
 import { dispatch } from '@youngdo/rx-state';
@@ -62,6 +62,8 @@ function App() {
 
 ```html
 <script>
+  import { dispatch } from '@youngdo/rx-state';
+
   import { count$ } from 'state';
   import { INCREASE, DECREASE } from 'action';
 

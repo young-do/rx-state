@@ -1,44 +1,26 @@
 {
   "name": "todo-svelte",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "serve": "vite preview",
     "build": "vite build",
-    "build-storybook": "build-storybook",
-    "storybook": "start-storybook -p 6006",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "test": "jest src"
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
   },
-  "browserslist": [
-    "last 1 version",
-    "not IE 11"
-  ],
   "dependencies": {
     "@youngdo/rx-state": "file:../..",
     "todomvc-app-css": "^2.4.1",
     "todomvc-common": "^1.0.5"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
-    "@testing-library/jest-dom": "^5.15.0",
-    "@testing-library/svelte": "^3.0.3",
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.30",
     "@tsconfig/svelte": "^2.0.1",
-    "@types/jest": "^27.0.2",
-    "autoprefixer": "^10.4.0",
-    "jest": "^27.3.1",
-    "postcss": "^8.3.11",
-    "postcss-load-config": "^3.1.0",
-    "prettier": "^2.4.1",
-    "prettier-plugin-svelte": "^2.4.0",
-    "svelte": "^3.44.1",
-    "svelte-check": "^2.1.0",
-    "svelte-jester": "^2.1.5",
-    "svelte-loader": "^3.1.2",
-    "svelte-preprocess": "^4.7.2",
-    "ts-jest": "^27.0.7",
-    "tslib": "^2.2.0",
-    "typescript": "^4.3.2",
-    "vite": "^2.6.4"
+    "svelte": "^3.44.0",
+    "svelte-check": "^2.2.7",
+    "svelte-preprocess": "^4.9.8",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.4",
+    "vite": "^2.7.2"
   }
 }

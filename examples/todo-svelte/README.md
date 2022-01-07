@@ -1,17 +1,3 @@
-# Svelte + TS template
-
-프로젝트를 svelte + ts + vite 조합으로 진행하면서 트러블슈팅한 경험을 토대로 템플릿으로 만들었습니다.
-기본 토대는 vite template이며, 아래 몇 가지 도구들을 추가했습니다.
-
-- [x] prettier
-- [x] postcss + autoprefixer
-- [x] storybook with vite
-- [x] testing-library
-
-참고, 아래 내용은 vite template의 readme.md 내용이며, 유용한 내용이 있어 지우지 않았습니다.
-
----
-
 # Svelte + TS + Vite
 
 This template should help get you started developing with Svelte and TypeScript in Vite.

@@ -4,6 +4,7 @@
 
     "target": "es6",
     "module": "esnext" /* Specify what module code is generated. */,
+    "lib": ["esnext"],
     "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
     "outDir": "dist",
     "moduleResolution": "node",

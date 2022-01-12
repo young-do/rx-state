@@ -1,34 +1,72 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import cloneDeep from 'lodash.clonedeep';
 
-class State<T> extends BehaviorSubject<T> {
-  constructor(value: T) {
+export class State<T, R = T> extends BehaviorSubject<T> {
+  #rootState?: State<R>;
+  #path?: string;
+  #memo = Object.create(null);
+
+  constructor(value: T, path?: string, rootState?: State<R>) {
     super(value);
+    this.#path = path;
+    this.#rootState = rootState;
+
+    if (path && rootState) {
+      // syncing
+      rootState.subscribe(rootValue => {
+        const nestedValue = getValue<T>(rootValue, path);
+        // @note: set을 호출하면 loop에 빠지므로 next 호출.
+        this.next(nestedValue as T);
+      });
+    }
   }
+
   set(nextValue: T): void {
-    this.next(nextValue);
+    if (this.#rootState && this.#path) {
+      // upcast
+      const merged = mergeValue(this.#rootState.value, this.#path, nextValue);
+      this.#rootState.set(merged);
+    } else {
+      this.next(nextValue);
+    }
+  }
+
+  partial<P>(path: string): State<P> {
+    if (this.#memo[path]) return this.#memo[path];
+
+    const partialValue = getValue<P>(this.value, path) as P;
+    const partialState = new State<P, T>(partialValue, path, this);
+
+    return (this.#memo[path] = partialState);
   }
 }
 
-export type RxState<T> = State<T>;
+export function getValue<T>(object: any, path: string): T | undefined {
+  const paths = path.split('/').filter(Boolean);
+  let nested = object;
 
-export const atom = <T>(initValue: T, reducerCallback?: (state: RxState<T>) => void) => {
-  const state = new State(initValue);
-  reducerCallback?.(state);
-  return state;
-};
+  paths.every(key => (nested = nested[key]));
+  return nested;
+}
 
-export const selector = <S, T>(state: RxState<T>, select: (value: T) => S) => {
-  return new Observable<S>(subscriber => {
-    state.subscribe({
-      next(value) {
-        subscriber.next(select(value));
-      },
-      error(err) {
-        subscriber.error(err);
-      },
-      complete() {
-        subscriber.complete();
-      },
-    });
+export function mergeValue<T>(object: any, path: string, value: T): any {
+  const paths = path.split('/').filter(Boolean);
+  const lastIndex = paths.length - 1;
+
+  if (paths.length === 0) {
+    return typeof value === 'object' ? { ...value } : value;
+  }
+
+  const cloned = cloneDeep(object);
+  let nested = cloned;
+  paths.forEach((path, index) => {
+    if (typeof nested[path] !== 'object') {
+      nested[path] = Object.create(null);
+    }
+    if (index === lastIndex) {
+      nested[path] = typeof value === 'object' ? { ...nested[path], ...value } : value;
+    }
+    nested = nested[path];
   });
-};
+  return cloned;
+}

@@ -1,6 +1,6 @@
 {
   "name": "@youngdo/rx-state",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "State management library by using Rxjs.",
   "homepage": "https://github.com/young-do/rx-state#readme",
   "bugs": {
@@ -13,6 +13,10 @@
   "license": "MIT",
   "author": "Young-do Cho <yd19932@gmail.com> (https://github.com/young-do)",
   "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf ./dist",
@@ -21,7 +25,7 @@
   },
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
-    "rxjs": "7.4.0"
+    "rxjs": "7.5.2"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",

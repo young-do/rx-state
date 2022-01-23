@@ -1,7 +1,7 @@
 import { Observable, Subject } from 'rxjs';
 import { nanoid } from 'nanoid';
 
-type Action<T = void> = {
+export type Action<T = void> = {
   (payload: T): [string, T];
   toString: () => string;
 };

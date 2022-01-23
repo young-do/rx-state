@@ -1,16 +1,24 @@
+import { dispatch, on, createAction } from './action';
+import type { Action } from './action';
+
 export const createEffector = <T>(flag?: T) => {
   return new Effector(flag);
 };
 
 class Effector<T> {
-  callbacks: Function[] = [];
+  action: Action<T>;
 
-  constructor(private flag: T) {}
+  constructor(private flag?: T) {
+    this.action = createAction<T>();
+    if (flag !== undefined) this.run(flag);
+  }
 
   register(callback: (flag: T) => any) {
-    this.callbacks.push(callback);
+    on(this.action).subscribe(callback);
   }
-  run() {
-    this.callbacks.forEach(callback => callback(this.flag));
+
+  run(flag?: T) {
+    if (flag !== undefined) this.flag = flag;
+    dispatch(this.action, this.flag);
   }
 }

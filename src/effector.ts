@@ -1,9 +1,11 @@
 import { dispatch, on, createAction } from './action';
 import type { Action } from './action';
 
-export const createEffector = <T>(flag?: T) => {
+export const createEffector = <T>(flag?: T): RxEffector<T> => {
   return new Effector(flag);
 };
+
+export type RxEffector<T> = Effector<T>;
 
 class Effector<T> {
   action: Action<T>;

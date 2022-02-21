@@ -5,7 +5,7 @@ export type RxState<T> = State<T>;
 
 export const atom = <T>(initValue: T, reducerCallback?: (state: RxState<T>) => any) => {
   const state = new State(initValue);
-  Promise.resolve().then(reducerCallback?.bind(this, state));
+  reducerCallback?.(state);
   return state;
 };
 

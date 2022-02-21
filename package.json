@@ -1,6 +1,6 @@
 {
   "name": "@youngdo/rx-state",
-  "version": "0.1.0-alpha.6",
+  "version": "0.1.0-alpha.7",
   "description": "State management library by using Rxjs.",
   "homepage": "https://github.com/young-do/rx-state#readme",
   "bugs": {
@@ -23,9 +23,12 @@
     "test": "jest",
     "prepare": "yarn clean && yarn build"
   },
+  "peerDependencies": {
+    "rxjs": "7.5.4"
+  },
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
-    "rxjs": "7.5.2"
+    "rxjs": "7.5.4"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",

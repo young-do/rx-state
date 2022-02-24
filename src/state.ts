@@ -78,4 +78,4 @@ export function mergeValue<T>(object: any, _path: string, value: T): any {
 }
 
 let index = 0;
-const getDefaultLabel = () => `unnamed state #${index++}`;
+const getDefaultLabel = () => `#${index++}_unnamed_state`;

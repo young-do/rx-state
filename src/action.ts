@@ -54,4 +54,4 @@ export const on = <T = void>(action: Action<T>) => {
 };
 
 let index = 0;
-const getDefaultLabel = () => `unnamed action #${index++}`;
+const getDefaultLabel = () => `#${index++}_unnamed_action`;

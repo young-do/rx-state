@@ -1,10 +1,12 @@
 import { BehaviorSubject } from 'rxjs';
 import cloneDeep from 'lodash.clonedeep';
+import { logForAtom } from './logger';
 
 export class State<T, R = T> extends BehaviorSubject<T> {
   private _rootState?: State<R>;
   private _path?: string;
   private _memo = Object.create(null);
+  public debugLabel = getDefaultLabel();
 
   constructor(value: T, _path?: string, _rootState?: State<R>) {
     super(value);
@@ -15,6 +17,8 @@ export class State<T, R = T> extends BehaviorSubject<T> {
       // syncing
       _rootState.subscribe(rootValue => {
         const nestedValue = getValue<T>(rootValue, _path);
+        logForAtom(this.debugLabel, this.value, nestedValue);
+
         // @note: set을 호출하면 loop에 빠지므로 next 호출.
         this.next(nestedValue as T);
       });
@@ -27,6 +31,8 @@ export class State<T, R = T> extends BehaviorSubject<T> {
       const merged = mergeValue(this._rootState.value, this._path, nextValue);
       this._rootState.set(merged);
     } else {
+      logForAtom(this.debugLabel, this.value, nextValue);
+
       this.next(nextValue);
     }
   }
@@ -70,3 +76,6 @@ export function mergeValue<T>(object: any, _path: string, value: T): any {
   });
   return cloned;
 }
+
+let index = 0;
+const getDefaultLabel = () => `unnamed state #${index++}`;

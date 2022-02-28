@@ -3,9 +3,9 @@ import { State } from './state';
 
 export type RxState<T> = State<T>;
 
-export const atom = <T>(initValue: T, reducerCallback?: (state: RxState<T>) => any) => {
+export const atom = <T>(initValue: T, debugLabel?: string) => {
   const state = new State(initValue);
-  reducerCallback?.(state);
+  if (debugLabel != null) state.debugLabel = debugLabel;
   return state;
 };
 

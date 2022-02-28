@@ -29,11 +29,12 @@ export class State<T, R = T> extends BehaviorSubject<T> {
     if (this._rootState && this._path) {
       // upcast
       const merged = mergeValue(this._rootState.value, this._path, nextValue);
-      this._rootState.set(merged);
-    } else {
+      return this._rootState.set(merged);
+    }
+    if (this.value !== nextValue) {
       logForAtom(this.debugLabel, this.value, nextValue);
 
-      this.next(nextValue);
+      return this.next(nextValue);
     }
   }
 

@@ -12,12 +12,12 @@ const actionManager = {
   map: Object.create(null) as Record<string, Subject<unknown>>,
   get(key: string) {
     const subject = this.map[key];
-    if (!subject) throw new Error(`Internal Error: Action ${key} has not been declared yet.`);
+    if (!subject) throw new Error(`[rx-state] Internal Error: Action ${key} has not been declared yet.`);
     return subject;
   },
   set(key: string) {
     const subject = new Subject();
-    if (this.map[key]) throw new Error(`Internal Error: Action ${key} already exists.`);
+    if (this.map[key]) throw new Error(`[rx-state] Internal Error: Action ${key} already exists.`);
     return (this.map[key] = subject);
   },
 };

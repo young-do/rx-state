@@ -7,21 +7,6 @@ describe('atom test', () => {
     expect(state.value).toBe('hello world');
   });
 
-  test('when set reducer callback', done => {
-    let called = false;
-    const state = atom('hello', state => {
-      called = true;
-      state.set(state.value + ' world');
-    });
-    state.subscribe(() => {
-      if (!called) return;
-
-      expect(called).toBe(true);
-      expect(state.value).toBe('hello world');
-      done();
-    });
-  });
-
   test('selector test', () => {
     const state = atom('hello');
     const select = selector(state, s => s.length);

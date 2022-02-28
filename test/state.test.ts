@@ -82,4 +82,22 @@ describe('state test', () => {
       expect(p3.value).toBe('amazing!');
     });
   });
+
+  describe('update test', () => {
+    it('when primitive type', () => {
+      const state = atom(0);
+
+      state.update(v => v + 1);
+
+      expect(state.value).toBe(1);
+    });
+
+    it('when object', () => {
+      const state = atom({ hello: 'world' });
+
+      state.update(v => ({ ...v, hello: 'update' }));
+
+      expect(state.value).toEqual({ hello: 'update' });
+    });
+  });
 });

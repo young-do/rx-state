@@ -38,6 +38,10 @@ export class State<T, R = T> extends BehaviorSubject<T> {
     }
   }
 
+  update(updater: (prev: T) => T) {
+    this.set(updater(this.value));
+  }
+
   partial<P>(_path: string): State<P> {
     if (this._memo[_path]) return this._memo[_path];
 

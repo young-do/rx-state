@@ -24,12 +24,11 @@ export class State<T, R = T> extends BehaviorSubject<T> {
         this.next(nestedValue as T);
       });
     } else {
-      // console.log('!!');
       logForAtom(this._debugLabel, undefined, this.value);
     }
   }
 
-  set(nextValue: T): void {
+  set = (nextValue: T): void => {
     if (this._rootState && this._path) {
       // upcast
       const merged = mergeValue(this._rootState.value, this._path, nextValue);
@@ -40,20 +39,20 @@ export class State<T, R = T> extends BehaviorSubject<T> {
 
       return this.next(nextValue);
     }
-  }
+  };
 
-  update(updater: (prev: T) => T) {
+  update = (updater: (prev: T) => T) => {
     this.set(updater(this.value));
-  }
+  };
 
-  partial<P>(_path: string): State<P> {
+  partial = <P>(_path: string): State<P> => {
     if (this._memo[_path]) return this._memo[_path];
 
     const partialValue = getValue<P>(this.value, _path) as P;
     const partialState = new State<P, T>(partialValue, `${this._debugLabel}${this._path}`, _path, this);
 
     return (this._memo[_path] = partialState);
-  }
+  };
 }
 
 export function getValue<T>(object: any, _path: string): T | undefined {

@@ -1,6 +1,6 @@
 {
   "name": "@youngdo/rx-state",
-  "version": "0.1.0-alpha.13",
+  "version": "0.1.0-alpha.14",
   "description": "State management library by using Rxjs.",
   "homepage": "https://github.com/young-do/rx-state#readme",
   "bugs": {
@@ -18,7 +18,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --project tsconfig.prod.json",
     "clean": "rm -rf ./dist",
     "test": "jest",
     "prepare": "yarn clean && yarn build"

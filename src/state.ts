@@ -6,10 +6,11 @@ export class State<T, R = T> extends BehaviorSubject<T> {
   private _rootState?: State<R>;
   private _path?: string;
   private _memo = Object.create(null);
-  public debugLabel = getDefaultLabel();
+  private _debugLabel: string;
 
-  constructor(value: T, _path?: string, _rootState?: State<R>) {
+  constructor(value: T, _debugLabel?: string, _path?: string, _rootState?: State<R>) {
     super(value);
+    this._debugLabel = _debugLabel || getDefaultLabel();
     this._path = _path;
     this._rootState = _rootState;
 
@@ -17,11 +18,14 @@ export class State<T, R = T> extends BehaviorSubject<T> {
       // syncing
       _rootState.subscribe(rootValue => {
         const nestedValue = getValue<T>(rootValue, _path);
-        logForAtom(this.debugLabel, this.value, nestedValue);
+        logForAtom(this._debugLabel, this.value, nestedValue);
 
         // @note: set을 호출하면 loop에 빠지므로 next 호출.
         this.next(nestedValue as T);
       });
+    } else {
+      // console.log('!!');
+      logForAtom(this._debugLabel, undefined, this.value);
     }
   }
 
@@ -32,7 +36,7 @@ export class State<T, R = T> extends BehaviorSubject<T> {
       return this._rootState.set(merged);
     }
     if (this.value !== nextValue) {
-      logForAtom(this.debugLabel, this.value, nextValue);
+      logForAtom(this._debugLabel, this.value, nextValue);
 
       return this.next(nextValue);
     }
@@ -46,7 +50,7 @@ export class State<T, R = T> extends BehaviorSubject<T> {
     if (this._memo[_path]) return this._memo[_path];
 
     const partialValue = getValue<P>(this.value, _path) as P;
-    const partialState = new State<P, T>(partialValue, _path, this);
+    const partialState = new State<P, T>(partialValue, `${this._debugLabel}${this._path}`, _path, this);
 
     return (this._memo[_path] = partialState);
   }

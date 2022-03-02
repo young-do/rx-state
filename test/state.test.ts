@@ -100,4 +100,21 @@ describe('state test', () => {
       expect(state.value).toEqual({ hello: 'update' });
     });
   });
+
+  describe('callback test', () => {
+    it('called async', done => {
+      let called = false;
+      const state = atom('hello', undefined, state => {
+        called = true;
+        state.set(state.value + ' world');
+      });
+      state.subscribe(value => {
+        if (!called) return;
+
+        expect(called).toBe(true);
+        expect(value).toBe('hello world');
+        done();
+      });
+    });
+  });
 });

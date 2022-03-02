@@ -25,10 +25,10 @@ export const DECREASE = createAction<void>();
 // state.ts
 import { atom, on } from '@youngdo/rx-state';
 
-export const count$ = atom<number>(0, count$ => {
-  on(INCREASE).subscribe(() => count$.set(count$.value + 1));
-  on(DECREASE).subscribe(() => count$.set(count$.value - 1));
-});
+export const count$ = atom<number>(0);
+
+on(INCREASE).subscribe(() => count$.set(count$.value + 1));
+on(DECREASE).subscribe(() => count$.set(count$.value - 1));
 ```
 
 ### on React

@@ -84,7 +84,7 @@ describe('state test', () => {
   });
 
   describe('update test', () => {
-    it('when primitive type', () => {
+    it('when primitive type, update fn works', () => {
       const state = atom(0);
 
       state.update(v => v + 1);
@@ -92,7 +92,7 @@ describe('state test', () => {
       expect(state.value).toBe(1);
     });
 
-    it('when object', () => {
+    it('when object, update fn works', () => {
       const state = atom({ hello: 'world' });
 
       state.update(v => ({ ...v, hello: 'update' }));
@@ -102,9 +102,9 @@ describe('state test', () => {
   });
 
   describe('callback test', () => {
-    it('called async', done => {
+    it('allow that callback is async', done => {
       let called = false;
-      const state = atom('hello', undefined, state => {
+      const state = atom('hello', undefined, async state => {
         called = true;
         state.set(state.value + ' world');
       });
@@ -115,6 +115,22 @@ describe('state test', () => {
         expect(value).toBe('hello world');
         done();
       });
+    });
+  });
+
+  describe('basic test', () => {
+    it('when no default value, subscribe fn is not called', () => {
+      const state = atom<number>();
+      const mockFn = jest.fn();
+      state.subscribe(mockFn);
+      expect(mockFn).not.toHaveBeenCalled();
+    });
+
+    it('when default value, subscribe fn is called', () => {
+      const state = atom(1);
+      const mockFn = jest.fn();
+      state.subscribe(mockFn);
+      expect(mockFn).toHaveBeenCalled();
     });
   });
 });

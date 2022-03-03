@@ -1,30 +1,35 @@
-import { BehaviorSubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import cloneDeep from 'lodash.clonedeep';
 import { logForAtom } from './logger';
 
-export class State<T, R = T> extends BehaviorSubject<T> {
+export class State<T, R = T> extends ReplaySubject<T> {
   private _rootState?: State<R>;
   private _path?: string;
   private _memo = Object.create(null);
   private _debugLabel: string;
+  public value!: T;
 
-  constructor(value: T, _debugLabel?: string, _path?: string, _rootState?: State<R>) {
-    super(value);
+  constructor(initValue?: T, _debugLabel?: string, _path?: string, _rootState?: State<R>) {
+    // @note: for behavior subject with no default value
+    super(1);
     this._debugLabel = _debugLabel || getDefaultLabel();
     this._path = _path;
     this._rootState = _rootState;
 
+    if (initValue != null) {
+      this.set(initValue);
+    }
+
     if (_path && _rootState) {
       // syncing
       _rootState.subscribe(rootValue => {
-        const nestedValue = getValue<T>(rootValue, _path);
+        const nestedValue = getValue<T>(rootValue, _path) as T;
         logForAtom(this._debugLabel, this.value, nestedValue);
 
         // @note: set을 호출하면 loop에 빠지므로 next 호출.
-        this.next(nestedValue as T);
+        this.value = nestedValue;
+        this.next(nestedValue);
       });
-    } else {
-      logForAtom(this._debugLabel, undefined, this.value);
     }
   }
 
@@ -36,7 +41,7 @@ export class State<T, R = T> extends BehaviorSubject<T> {
     }
     if (this.value !== nextValue) {
       logForAtom(this._debugLabel, this.value, nextValue);
-
+      this.value = nextValue;
       return this.next(nextValue);
     }
   };

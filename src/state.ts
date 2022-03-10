@@ -16,8 +16,9 @@ export class State<T, R = T> extends ReplaySubject<T> {
     this._path = _path;
     this._rootState = _rootState;
 
-    if (initValue != null) {
-      this.set(initValue);
+    // @note: 'null' can be initial value, but 'undefined' not.
+    if (initValue !== null) {
+      this.set(initValue as T);
     }
 
     if (_path && _rootState) {

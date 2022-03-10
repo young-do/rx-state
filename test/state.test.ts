@@ -132,5 +132,15 @@ describe('state test', () => {
       state.subscribe(mockFn);
       expect(mockFn).toHaveBeenCalled();
     });
+
+    it('has value from next line', () => {
+      const state = atom(1);
+      expect(state.value).toBe(1);
+    });
+
+    it('null can be initial value', () => {
+      const state = atom(null);
+      expect(state.value).toBe(null);
+    });
   });
 });

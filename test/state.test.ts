@@ -36,6 +36,16 @@ describe('state test', () => {
           done();
         });
       }));
+
+    it('will call cleanup fn, when the state is completed', () =>
+      new Promise<void>(done => {
+        const state = atom('hello', undefined, () => {
+          return () => {
+            done();
+          };
+        });
+        state.complete();
+      }));
   });
 
   describe('basic test', () => {

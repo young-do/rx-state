@@ -62,5 +62,12 @@ describe('state test', () => {
       const state = atom(null);
       expect(state.value).toBe(null);
     });
+
+    it('cannot use next method', () => {
+      const state = atom(1);
+      // @ts-ignore
+      state.next(2);
+      expect(state.value).toBe(1);
+    });
   });
 });

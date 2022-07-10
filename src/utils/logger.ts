@@ -15,7 +15,7 @@ export const logForAction = <T = any>(label: string, payload: T) => {
   snapshot.actions[label] = payload;
 
   if (traceTarget === 'none') return;
-  if (traceTarget === 'named' && label.charAt(0) === '#') return;
+  if (traceTarget === 'named' && label.startsWith('#')) return;
 
   console.log(`[rx-state:action] \x1b[94m${label}`, payload);
 };
@@ -24,7 +24,7 @@ export const logForAtom = <T = any>(label: string, prev?: T, curr?: T) => {
   snapshot.atoms[label] = { prev, curr };
 
   if (traceTarget === 'none') return;
-  if (traceTarget === 'named' && label.charAt(0) === '#') return;
+  if (traceTarget === 'named' && label.startsWith('#')) return;
 
   console.log(`[rx-state:atom] \x1b[35m${label}`, prev, '→', curr);
 };

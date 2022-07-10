@@ -1,12 +1,14 @@
 import { Observable, Subject } from 'rxjs';
-import { nanoid } from 'nanoid';
-import { logForAction } from './logger';
+import { createLabelerWithCount } from './utils/generate-label';
+import { generateKey } from './utils/gerenate-key';
+import { logForAction } from './utils/logger';
 
 export type Action<T = void> = {
-  (payload: T): [string, string, T];
+  (payload: T): ActionPayload<T>;
   toString: () => string;
   debugLabel: string;
 };
+export type ActionPayload<T> = [key: string, debugLabel: string, payload: T];
 
 const actionManager = {
   map: Object.create(null) as Record<string, Subject<unknown>>,
@@ -21,9 +23,10 @@ const actionManager = {
     return (this.map[key] = subject);
   },
 };
+const getDefaultLabel = createLabelerWithCount('unnamed_action');
 
 export const createAction = <T = void>(debugLabel?: string) => {
-  const key = `#${nanoid()}`;
+  const key = `#${generateKey()}`;
   actionManager.set(key);
 
   const action: Action<T> = (payload: T) => [key, action.debugLabel, payload];
@@ -33,13 +36,9 @@ export const createAction = <T = void>(debugLabel?: string) => {
   return action;
 };
 
-export const dispatch = <T = void>(actionOrTuple: Action<T> | [string, string, T], payload?: T) => {
-  const isAction = typeof actionOrTuple === 'function';
-
-  const key = isAction ? actionOrTuple.toString() : actionOrTuple[0];
+export const dispatch = <T = void>(actionPayload: ActionPayload<T>) => {
+  const [key, debugLabel, payload] = actionPayload;
   const subject = actionManager.get(key);
-  const debugLabel = isAction ? actionOrTuple.debugLabel : actionOrTuple[1];
-  payload = isAction ? payload : actionOrTuple[2];
 
   logForAction(debugLabel, payload);
 
@@ -52,6 +51,3 @@ export const on = <T = void>(action: Action<T>) => {
 
   return subject.asObservable() as Observable<T>;
 };
-
-let index = 0;
-const getDefaultLabel = () => `#${index++}_unnamed_action`;

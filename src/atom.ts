@@ -8,7 +8,7 @@ export const atom = <T>(initValue?: T, debugLabel?: string, callback?: RxStateCa
   const state = new State<T>(initValue, debugLabel);
   Promise.resolve().then(() => {
     const cleanup = callback?.(state)?.bind(this);
-    state.subscribe({ complete: cleanup });
+    cleanup && state.subscribe({ complete: cleanup });
   });
   return state;
 };

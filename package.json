@@ -22,12 +22,14 @@
     "build": "tsc --project tsconfig.prod.json",
     "clean": "rm -rf ./dist",
     "prepare": "yarn clean && yarn build",
-    "test": "vitest"
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "rxjs": "7.5.4"
   },
   "devDependencies": {
+    "c8": "^7.11.3",
     "prettier": "^2.5.1",
     "typescript": "4.5.4",
     "vitest": "^0.18.0"

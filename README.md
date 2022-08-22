@@ -28,6 +28,10 @@ import { atom, on } from '@youngdo/rx-state';
 export const count$ = atom<number>(0, 'count$', count$ => {
   on(INCREASE).subscribe(() => count$.set(count$.value + 1));
   on(DECREASE).subscribe(() => count$.set(count$.value - 1));
+
+  // // or use 'update'
+  // on(INCREASE).subscribe(() => count$.update(prev => prev + 1));
+  // on(DECREASE).subscribe(() => count$.update(prev => prev - 1));
 });
 ```
 

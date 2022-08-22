@@ -1,4 +1,4 @@
-import { ReplaySubject } from 'rxjs';
+import { noop, ReplaySubject } from 'rxjs';
 import { createLabelerWithCount } from './utils/generate-label';
 import { logForAtom } from './utils/logger';
 
@@ -6,7 +6,7 @@ const getDefaultLabel = createLabelerWithCount('unnamed_state');
 
 export class State<T> extends ReplaySubject<T> {
   public value!: T;
-  private _debugLabel: string;
+  public readonly _debugLabel: string;
   private _next: (value: T) => void;
 
   constructor(initValue?: T, _debugLabel?: string) {
@@ -20,6 +20,9 @@ export class State<T> extends ReplaySubject<T> {
     if (initValue !== undefined) {
       this.set(initValue as T);
     }
+
+    // @note: when completed, this state is no longer updated.
+    this.subscribe({ complete: () => (this.set = noop) });
   }
 
   set = (nextValue: T): void => {

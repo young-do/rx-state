@@ -36,3 +36,9 @@ export const logForAtom = <T = any>(label: string, prev?: T, curr?: T) => {
 export const logSnapshot = () => {
   console.log('[rx-state:snapshot]', snapshot);
 };
+
+export const logWarn = (label: string, message: string) => {
+  if (skipLogging(label)) return;
+
+  console.warn(`[rx-state:warn] ${message}`);
+};

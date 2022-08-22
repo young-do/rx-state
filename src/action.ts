@@ -25,11 +25,11 @@ const actionManager = {
 };
 const getDefaultLabel = createLabelerWithCount('unnamed_action');
 
-export function createAction<T = void>(debugLabel?: string) {
+export function createAction<T = void>(debugLabel?: string): Action<T> {
   const key = `#${generateKey()}`;
   actionManager.set(key);
 
-  const action: Action<T> = (payload: T) => [key, action.debugLabel, payload];
+  const action = ((payload: T) => [key, action.debugLabel, payload]) as Action<T>;
   action.getKey = () => key;
   action.debugLabel = debugLabel || getDefaultLabel();
 
@@ -38,6 +38,7 @@ export function createAction<T = void>(debugLabel?: string) {
 
 export function dispatch<T = void>(ActionTuple: ActionTuple<T>): void;
 export function dispatch<T = void>(action: Action<T>, payload: T): void;
+export function dispatch<T extends void>(action: Action<T>): void;
 export function dispatch<T = void>(actionOrActionTuple: Action<T> | ActionTuple<T>, payload?: T) {
   const isAction = typeof actionOrActionTuple === 'function';
 

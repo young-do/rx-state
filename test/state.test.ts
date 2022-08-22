@@ -80,4 +80,18 @@ describe('state test', () => {
         state.complete();
       }));
   });
+
+  describe('override test', () => {
+    it('prev state is completed, when key duplicated', () =>
+      new Promise<void>(done => {
+        const key = 'state';
+        const state = atom('hello', key);
+        state.subscribe({
+          complete: () => {
+            done();
+          },
+        });
+        atom('world', key);
+      }));
+  });
 });

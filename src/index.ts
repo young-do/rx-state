@@ -1,3 +1,3 @@
 export * from './atom';
 export * from './action';
-export { setTraceTarget, TraceTarget, logSnapshot } from './utils/logger';
+export { setLogLevel, logSnapshot } from './utils/logger';

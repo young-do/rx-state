@@ -4,11 +4,11 @@ import { generateKey } from './utils/gerenate-key';
 import { logForAction } from './utils/logger';
 
 export type Action<T = void> = {
-  (payload: T): ActionPayload<T>;
-  toString: () => string;
+  (payload: T): ActionTuple<T>;
+  getKey: () => string;
   debugLabel: string;
 };
-export type ActionPayload<T> = [key: string, debugLabel: string, payload: T];
+export type ActionTuple<T> = [key: string, debugLabel: string, payload: T];
 
 const actionManager = {
   map: Object.create(null) as Record<string, Subject<unknown>>,
@@ -25,29 +25,36 @@ const actionManager = {
 };
 const getDefaultLabel = createLabelerWithCount('unnamed_action');
 
-export const createAction = <T = void>(debugLabel?: string) => {
+export function createAction<T = void>(debugLabel?: string) {
   const key = `#${generateKey()}`;
   actionManager.set(key);
 
   const action: Action<T> = (payload: T) => [key, action.debugLabel, payload];
-  action.toString = () => key;
+  action.getKey = () => key;
   action.debugLabel = debugLabel || getDefaultLabel();
 
   return action;
-};
+}
 
-export const dispatch = <T = void>(actionPayload: ActionPayload<T>) => {
-  const [key, debugLabel, payload] = actionPayload;
+export function dispatch<T = void>(ActionTuple: ActionTuple<T>): void;
+export function dispatch<T = void>(action: Action<T>, payload: T): void;
+export function dispatch<T = void>(actionOrActionTuple: Action<T> | ActionTuple<T>, payload?: T) {
+  const isAction = typeof actionOrActionTuple === 'function';
+
+  const key = isAction ? actionOrActionTuple.getKey() : actionOrActionTuple[0];
+  const debugLabel = isAction ? actionOrActionTuple.debugLabel : actionOrActionTuple[1];
+  payload = isAction ? payload : actionOrActionTuple[2];
+
   const subject = actionManager.get(key);
 
   logForAction(debugLabel, payload);
 
   subject.next(payload);
-};
+}
 
-export const on = <T = void>(action: Action<T>) => {
-  const key = action.toString();
+export function on<T = void>(action: Action<T>) {
+  const key = action.getKey();
   const subject = actionManager.get(key);
 
   return subject.asObservable() as Observable<T>;
-};
+}

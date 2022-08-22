@@ -1,12 +1,14 @@
 import { Observable, Subject } from 'rxjs';
-import { nanoid } from 'nanoid';
-import { logForAction } from './logger';
+import { createLabelerWithCount } from './utils/generate-label';
+import { generateKey } from './utils/gerenate-key';
+import { logForAction } from './utils/logger';
 
 export type Action<T = void> = {
-  (payload: T): [string, string, T];
-  toString: () => string;
+  (payload: T): ActionTuple<T>;
+  getKey: () => string;
   debugLabel: string;
 };
+export type ActionTuple<T> = [key: string, debugLabel: string, payload: T];
 
 const actionManager = {
   map: Object.create(null) as Record<string, Subject<unknown>>,
@@ -21,37 +23,39 @@ const actionManager = {
     return (this.map[key] = subject);
   },
 };
+const getDefaultLabel = createLabelerWithCount('unnamed_action');
 
-export const createAction = <T = void>(debugLabel?: string) => {
-  const key = `#${nanoid()}`;
+export function createAction<T = void>(debugLabel?: string): Action<T> {
+  const key = `#${generateKey()}`;
   actionManager.set(key);
 
-  const action: Action<T> = (payload: T) => [key, action.debugLabel, payload];
-  action.toString = () => key;
+  const action = ((payload: T) => [key, action.debugLabel, payload]) as Action<T>;
+  action.getKey = () => key;
   action.debugLabel = debugLabel || getDefaultLabel();
 
   return action;
-};
+}
 
-export const dispatch = <T = void>(actionOrTuple: Action<T> | [string, string, T], payload?: T) => {
-  const isAction = typeof actionOrTuple === 'function';
+export function dispatch<T = void>(ActionTuple: ActionTuple<T>): void;
+export function dispatch<T = void>(action: Action<T>, payload: T): void;
+export function dispatch<T extends void>(action: Action<T>): void;
+export function dispatch<T = void>(actionOrActionTuple: Action<T> | ActionTuple<T>, payload?: T) {
+  const isAction = typeof actionOrActionTuple === 'function';
 
-  const key = isAction ? actionOrTuple.toString() : actionOrTuple[0];
+  const key = isAction ? actionOrActionTuple.getKey() : actionOrActionTuple[0];
+  const debugLabel = isAction ? actionOrActionTuple.debugLabel : actionOrActionTuple[1];
+  payload = isAction ? payload : actionOrActionTuple[2];
+
   const subject = actionManager.get(key);
-  const debugLabel = isAction ? actionOrTuple.debugLabel : actionOrTuple[1];
-  payload = isAction ? payload : actionOrTuple[2];
 
   logForAction(debugLabel, payload);
 
   subject.next(payload);
-};
+}
 
-export const on = <T = void>(action: Action<T>) => {
-  const key = action.toString();
+export function on<T = void>(action: Action<T>) {
+  const key = action.getKey();
   const subject = actionManager.get(key);
 
   return subject.asObservable() as Observable<T>;
-};
-
-let index = 0;
-const getDefaultLabel = () => `#${index++}_unnamed_action`;
+}

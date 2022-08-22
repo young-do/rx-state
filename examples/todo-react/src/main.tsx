@@ -1,3 +1,7 @@
+// @note: for debug
+import { setLogLevel } from '@youngdo/rx-state';
+setLogLevel('named');
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';

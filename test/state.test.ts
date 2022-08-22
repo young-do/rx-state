@@ -2,6 +2,39 @@ import { describe, it, expect, vi } from 'vitest';
 import { atom } from '../src';
 
 describe('state test', () => {
+  describe('basic test', () => {
+    it('when no default value, subscribe fn is not called', () => {
+      const state = atom<number>();
+      const mockFn = vi.fn();
+      state.subscribe(mockFn);
+      expect(mockFn).not.toHaveBeenCalled();
+    });
+
+    it('when default value, subscribe fn is called', () => {
+      const state = atom(1);
+      const mockFn = vi.fn();
+      state.subscribe(mockFn);
+      expect(mockFn).toHaveBeenCalled();
+    });
+
+    it('has value from next line', () => {
+      const state = atom(1);
+      expect(state.value).toBe(1);
+    });
+
+    it('null can be initial value', () => {
+      const state = atom(null);
+      expect(state.value).toBe(null);
+    });
+
+    it('cannot use next method', () => {
+      const state = atom(1);
+      // @ts-ignore
+      state.next(2);
+      expect(state.value).toBe(1);
+    });
+  });
+
   describe('update test', () => {
     it('when primitive type, update fn works', () => {
       const state = atom(0);
@@ -46,38 +79,5 @@ describe('state test', () => {
         });
         state.complete();
       }));
-  });
-
-  describe('basic test', () => {
-    it('when no default value, subscribe fn is not called', () => {
-      const state = atom<number>();
-      const mockFn = vi.fn();
-      state.subscribe(mockFn);
-      expect(mockFn).not.toHaveBeenCalled();
-    });
-
-    it('when default value, subscribe fn is called', () => {
-      const state = atom(1);
-      const mockFn = vi.fn();
-      state.subscribe(mockFn);
-      expect(mockFn).toHaveBeenCalled();
-    });
-
-    it('has value from next line', () => {
-      const state = atom(1);
-      expect(state.value).toBe(1);
-    });
-
-    it('null can be initial value', () => {
-      const state = atom(null);
-      expect(state.value).toBe(null);
-    });
-
-    it('cannot use next method', () => {
-      const state = atom(1);
-      // @ts-ignore
-      state.next(2);
-      expect(state.value).toBe(1);
-    });
   });
 });

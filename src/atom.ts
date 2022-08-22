@@ -2,7 +2,7 @@ import { State } from './state';
 import { logWarn } from './utils/logger';
 
 export type RxState<T> = State<T>;
-export type RxStateCallback<T> = (state: RxState<T>) => void | RxStateCleanup;
+export type RxStateCallback<T> = (state: RxState<T>) => void | Promise<void> | RxStateCleanup | Promise<RxStateCleanup>;
 export type RxStateCleanup = () => void;
 
 const stateMap = new Map<string, RxState<unknown>>();
@@ -15,8 +15,11 @@ export const atom = <T>(initValue?: T, debugLabel?: string, callback?: RxStateCa
   }
   const state = new State<T>(initValue, debugLabel);
   Promise.resolve().then(() => {
-    const cleanup = callback?.(state)?.bind(this);
-    cleanup && state.subscribe({ complete: cleanup });
+    Promise.resolve(callback?.(state)).then(cleanup => {
+      if (cleanup && typeof cleanup === 'function') {
+        state.subscribe({ complete: cleanup });
+      }
+    });
   });
   stateMap.set(state._debugLabel, state as RxState<unknown>);
   return state;

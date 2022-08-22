@@ -1,5 +1,5 @@
 <script lang="ts">
-import { dispatch, logSnapshot, setTraceTarget } from '@youngdo/rx-state';
+import { dispatch, logSnapshot, setLogLevel } from '@youngdo/rx-state';
 import { onMount } from 'svelte';
 import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './store/action';
 import { Todo, todoList$ } from './store/states';
@@ -41,7 +41,7 @@ const deleteAllCompleted = () => {
 };
 
 onMount(() => {
-  setTraceTarget('all')
+  setLogLevel('all')
   logSnapshot()
 
   const changeFilterByHash = () => {

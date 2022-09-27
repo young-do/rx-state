@@ -7,7 +7,7 @@ export type RxStateCleanup = () => void;
 
 const stateMap = new Map<string, RxState<unknown>>();
 
-export const atom = <T>(initValue?: T, debugLabel?: string, callback?: RxStateCallback<T>) => {
+export function atom<T>(initValue?: T, debugLabel?: string, callback?: RxStateCallback<T>) {
   if (debugLabel && stateMap.has(debugLabel)) {
     stateMap.get(debugLabel)?.complete();
     stateMap.delete(debugLabel);
@@ -23,4 +23,4 @@ export const atom = <T>(initValue?: T, debugLabel?: string, callback?: RxStateCa
   });
   stateMap.set(state._debugLabel, state as RxState<unknown>);
   return state;
-};
+}

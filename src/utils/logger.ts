@@ -30,7 +30,7 @@ export const logForAtom = <T = any>(label: string, prev?: T, curr?: T) => {
 
   if (skipLogging(label)) return;
 
-  console.log(`\t[rx-state:atom] \x1b[35m${label}`, prev, '→', curr);
+  console.log(`[rx-state:atom] \x1b[35m${label}`, prev, '→', curr);
 };
 
 export const logSnapshot = () => {

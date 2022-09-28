@@ -1,29 +1,21 @@
 <script setup lang="ts">
 import { dispatch, logSnapshot, setLogLevel } from '@youngdo/rx-state';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './store/action';
 import { Todo, todoList$ } from './store/states';
 import { rxToRef } from './utils';
 
-const calcFilteredTodoList = (todoList: Todo[], filter: Todo['status'] | null) => {
-  return todoList.filter(todo => {
-    if (filter === null) return true;
-    return todo.status === filter;
-  });
-};
-
 const todoList = rxToRef(todoList$);
 const text = ref('');
 const filter = ref<Todo['status'] | null>(null);
-const filteredTodoList = ref<Todo[]>(calcFilteredTodoList(todoList.value, filter.value));
 
-watch([todoList, filter], ([todoList, filter]) => {
-  filteredTodoList.value = calcFilteredTodoList(todoList, filter);
-});
+const filteredTodoList = computed(() =>
+  todoList.value.filter(todo => {
+    if (filter.value === null) return true;
+    return todo.status === filter.value;
+  }),
+);
 
-const handleKeydown = (e: KeyboardEvent) => {
-  e.key === 'Enter' && addTodo();
-};
 const addTodo = () => {
   if (text.value) {
     dispatch(AddTodo(text.value));
@@ -50,16 +42,21 @@ const deleteAllCompleted = () => {
   dispatch(DeleteTodoList(idList));
 };
 
+const changeFilterByHash = () => {
+  const hash = location.hash;
+  filter.value = hash === '#/active' ? 'active' : hash === '#/completed' ? 'completed' : null;
+};
+
 onMounted(() => {
   setLogLevel('all');
   logSnapshot();
 
-  const changeFilterByHash = () => {
-    const hash = location.hash;
-    filter.value = hash === '#/active' ? 'active' : hash === '#/completed' ? 'completed' : null;
-  };
-  window.onhashchange = changeFilterByHash;
+  window.addEventListener('hashchange', changeFilterByHash);
   changeFilterByHash();
+});
+
+onUnmounted(() => {
+  window.removeEventListener('hashchange', changeFilterByHash);
 });
 </script>
 
@@ -67,7 +64,7 @@ onMounted(() => {
   <section class="todoapp">
     <header class="header">
       <h1>todos</h1>
-      <input class="new-todo" placeholder="What needs to be done?" v-model="text" @keypress="handleKeydown" />
+      <input class="new-todo" placeholder="What needs to be done?" v-model="text" @keypress.enter="addTodo" />
     </header>
     <section class="main">
       <input id="toggle-all" class="toggle-all" type="checkbox" @click="changeAllCompleted" />
@@ -80,7 +77,7 @@ onMounted(() => {
               :id="'toggle-todo-' + todo.id"
               class="toggle"
               type="checkbox"
-              v-model="todo.completed"
+              :checked="todo.completed"
               @click="changeTodoStatus(todo)"
             />
             <label :for="'toggle-todo-' + todo.id">{{ todo.text }}</label>

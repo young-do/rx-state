@@ -37,7 +37,7 @@ export const count$ = atom<number>(0, 'count$', count$ => {
 
 ### on React
 
-💡 useRxState code at [here](./examples/todo-react/src/hooks/useRxState.ts).
+💡 `useRxState` code at [here](./examples/todo-react/src/hooks/useRxState.ts).
 
 ```jsx
 import { dispatch } from '@youngdo/rx-state';
@@ -80,4 +80,43 @@ function App() {
   <button on:click="{increase}">+</button>
   <button on:click="{decrease}">-</button>
 </div>
+```
+
+### on Vue
+
+💡 `rxToRef` code at [here](./examples/todo-vue/src/utils/index.ts).
+
+```vue
+<script>
+import { dispatch } from '@youngdo/rx-state';
+import { defineComponent } from 'vue';
+
+import { count$ } from 'state';
+import { INCREASE, DECREASE } from 'action';
+import { rxToRef } from 'utils';
+
+export default defineComponent({
+  setup() {
+    return {
+      count: rxToRef(count$),
+    };
+  },
+  methods: {
+    increase() {
+      dispatch(INCREASE);
+    },
+    decrease() {
+      dispatch(DECREASE);
+    },
+  },
+});
+</script>
+
+<template>
+  <div>
+    count: {{ count }}
+    <button @click="increase">+</button>
+    <button @click="decrease">-</button>
+  </div>
+</template>
 ```

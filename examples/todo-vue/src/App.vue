@@ -1,62 +1,68 @@
-<script setup lang="ts">
+<script lang="ts">
 import { dispatch, logSnapshot, setLogLevel } from '@youngdo/rx-state';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './store/action';
 import { Todo, todoList$ } from './store/states';
 import { rxToRef } from './utils';
 
-const todoList = rxToRef(todoList$);
-const text = ref('');
-const filter = ref<Todo['status'] | null>(null);
+export default defineComponent({
+  setup() {
+    return {
+      todoList: rxToRef(todoList$),
+    };
+  },
+  data() {
+    return {
+      text: '',
+      filter: null as Todo['status'] | null,
+    };
+  },
+  computed: {
+    filteredTodoList() {
+      return this.filter === null ? this.todoList : this.todoList.filter(todo => todo.status === this.filter);
+    },
+  },
+  methods: {
+    addTodo() {
+      if (this.text) {
+        dispatch(AddTodo(this.text));
+        this.text = '';
+      }
+    },
+    changeTodoStatus(todo: Todo) {
+      const { id, status } = todo;
+      const nextStatus = status === 'active' ? 'completed' : 'active';
+      dispatch(ChangeTodoListStatus([{ id, status: nextStatus }]));
+    },
+    changeAllCompleted() {
+      dispatch(
+        ChangeTodoListStatus(
+          this.todoList.filter(todo => todo.status === 'active').map(todo => ({ id: todo.id, status: 'completed' })),
+        ),
+      );
+    },
+    deleteTodo(id: number) {
+      dispatch(DeleteTodoList([id]));
+    },
+    deleteAllCompleted() {
+      const idList = this.todoList.filter(todo => todo.status === 'completed').map(todo => todo.id);
+      dispatch(DeleteTodoList(idList));
+    },
+    changeFilterByHash() {
+      const hash = location.hash;
+      this.filter = hash === '#/active' ? 'active' : hash === '#/completed' ? 'completed' : null;
+    },
+  },
+  mounted() {
+    setLogLevel('all');
+    logSnapshot();
 
-const filteredTodoList = computed(() =>
-  todoList.value.filter(todo => {
-    if (filter.value === null) return true;
-    return todo.status === filter.value;
-  }),
-);
-
-const addTodo = () => {
-  if (text.value) {
-    dispatch(AddTodo(text.value));
-    text.value = '';
-  }
-};
-const changeTodoStatus = (todo: Todo) => {
-  const { id, status } = todo;
-  const nextStatus = status === 'active' ? 'completed' : 'active';
-  dispatch(ChangeTodoListStatus([{ id, status: nextStatus }]));
-};
-const changeAllCompleted = () => {
-  dispatch(
-    ChangeTodoListStatus(
-      todoList.value.filter(todo => todo.status === 'active').map(todo => ({ id: todo.id, status: 'completed' })),
-    ),
-  );
-};
-const deleteTodo = (id: number) => {
-  dispatch(DeleteTodoList([id]));
-};
-const deleteAllCompleted = () => {
-  const idList = todoList.value.filter(todo => todo.status === 'completed').map(todo => todo.id);
-  dispatch(DeleteTodoList(idList));
-};
-
-const changeFilterByHash = () => {
-  const hash = location.hash;
-  filter.value = hash === '#/active' ? 'active' : hash === '#/completed' ? 'completed' : null;
-};
-
-onMounted(() => {
-  setLogLevel('all');
-  logSnapshot();
-
-  window.addEventListener('hashchange', changeFilterByHash);
-  changeFilterByHash();
-});
-
-onUnmounted(() => {
-  window.removeEventListener('hashchange', changeFilterByHash);
+    window.addEventListener('hashchange', this.changeFilterByHash);
+    this.changeFilterByHash();
+  },
+  unmounted() {
+    window.removeEventListener('hashchange', this.changeFilterByHash);
+  },
 });
 </script>
 

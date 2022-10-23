@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createAction } from './action';
+import { createAction } from '../action';
 
 describe('action test', () => {
   describe('when payload is void', () => {

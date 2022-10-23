@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createAtom } from './atom';
+import { createAtom } from '../atom';
 
 describe('atom test', () => {
   describe('basic test', () => {
@@ -80,6 +80,58 @@ describe('atom test', () => {
           };
         });
         atom.complete();
+      }));
+  });
+
+  describe('reset test', () => {
+    it('will be initial value, when reset', () =>
+      new Promise<void>(done => {
+        const atom = createAtom<number>(0);
+        atom.set(1);
+        atom.reset();
+        expect(atom.value).toBe(0);
+        atom.$.subscribe(value => {
+          expect(value).toBe(0);
+          done();
+        });
+      }));
+
+    it('will be value is undefined, when reset', () => {
+      const atom = createAtom<number>();
+      atom.set(1);
+      atom.reset();
+      expect(atom.value).toBeUndefined();
+
+      const mockFn = vi.fn();
+      atom.$.subscribe(mockFn);
+      expect(mockFn).not.toHaveBeenCalled();
+    });
+
+    it('will not completed previous subscriptions, when reset', () =>
+      new Promise<void>(done => {
+        const atom = createAtom<number>();
+        const sub = atom.$.subscribe(value => {
+          expect(value).toBe(1);
+          done();
+        });
+        atom.reset();
+        expect(sub.closed).toBe(false);
+        atom.set(1);
+      }));
+
+    it('will be value is undefined, when reset', () =>
+      new Promise<void>(done => {
+        const atom = createAtom<number>();
+        atom.set(1);
+        atom.complete();
+        atom.reset();
+        expect(atom.value).toBeUndefined();
+
+        atom.$.subscribe(value => {
+          expect(value).toBe(1);
+          done();
+        });
+        atom.set(1);
       }));
   });
 });

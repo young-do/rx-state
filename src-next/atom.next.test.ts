@@ -59,7 +59,7 @@ describe('atom test', () => {
     it('allow that callback is async', () =>
       new Promise<void>(done => {
         let called = false;
-        const atom = createAtom('hello', () => {
+        const atom = createAtom('hello', undefined, () => {
           called = true;
           atom.set(`${atom.value} world`);
         });
@@ -74,7 +74,7 @@ describe('atom test', () => {
 
     it('will call cleanup fn, when the atom is completed', () =>
       new Promise<void>(done => {
-        const atom = createAtom('hello', () => {
+        const atom = createAtom('hello', undefined, () => {
           return () => {
             done();
           };

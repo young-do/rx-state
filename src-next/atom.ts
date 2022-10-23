@@ -1,4 +1,5 @@
 import { Subject, Observable, startWith, switchMap, ReplaySubject } from 'rxjs';
+import { logging } from './logger';
 
 export type Atom<T = void> = {
   $: Observable<T>;
@@ -9,7 +10,7 @@ export type Atom<T = void> = {
   complete: () => void;
 };
 
-export function createAtom<T = void>(initValue?: T, callback?: () => void | Function): Atom<T> {
+export function createAtom<T = void>(initValue?: T, debugLabel?: string, callback?: () => void | Function): Atom<T> {
   const _factory = () => new ReplaySubject<T>(1);
   const _resetter = new Subject<number>();
   const _source = new Subject<T>();
@@ -19,6 +20,8 @@ export function createAtom<T = void>(initValue?: T, callback?: () => void | Func
   let _value: T;
 
   const _init = () => {
+    _source.subscribe(logging('atom', debugLabel));
+
     if (initValue !== undefined) {
       _set(initValue);
     }

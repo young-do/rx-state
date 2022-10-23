@@ -3,7 +3,7 @@ import { getDefaultLabel, logging } from './logger';
 
 export type Atom<T = void> = {
   $: Observable<T>;
-  value: T;
+  readonly value: T;
   set: (value: T) => void;
   update: (updater: (prev: T) => T) => void;
   reset: () => void;

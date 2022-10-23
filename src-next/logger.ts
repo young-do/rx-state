@@ -6,7 +6,7 @@ const snapshot: Record<string, Record<string, unknown>> = {};
 let logLevel: LogLevel = 'none';
 
 export const logging =
-  <T>(field: string, debugLabel = getDefaultLabel()) =>
+  <T>(field: string, debugLabel: string) =>
   (payload: T) => {
     if (!snapshot[field]) snapshot[field] = {};
     snapshot[field][debugLabel] = payload;
@@ -22,7 +22,7 @@ export const logSnapshot = () => {
   console.log('[rx-state:snapshot]', snapshot);
 };
 
-const getDefaultLabel = () => {
+export const getDefaultLabel = () => {
   return PREFIX_PRIVATE + Math.random().toString(36).substr(2, 11);
 };
 

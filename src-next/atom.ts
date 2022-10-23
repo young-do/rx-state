@@ -1,5 +1,5 @@
 import { Subject, Observable, startWith, switchMap, ReplaySubject } from 'rxjs';
-import { logging } from './logger';
+import { getDefaultLabel, logging } from './logger';
 
 export type Atom<T = void> = {
   $: Observable<T>;
@@ -14,13 +14,14 @@ export function createAtom<T = void>(initValue?: T, debugLabel?: string, callbac
   const _factory = () => new ReplaySubject<T>(1);
   const _resetter = new Subject<number>();
   const _source = new Subject<T>();
+  const _debugLabel = debugLabel || getDefaultLabel();
 
   let _destination = _factory();
   let _subscription = _source.subscribe(_destination);
   let _value: T;
 
   const _init = () => {
-    _source.subscribe(logging('atom', debugLabel));
+    _source.subscribe(logging('atom', _debugLabel));
 
     if (initValue !== undefined) {
       _set(initValue);
@@ -28,7 +29,7 @@ export function createAtom<T = void>(initValue?: T, debugLabel?: string, callbac
     if (callback) {
       Promise.resolve().then(() => {
         const cleanup = callback();
-        _source.subscribe({ complete: () => cleanup?.() });
+        _destination.subscribe({ complete: () => cleanup?.() });
       });
     }
   };
@@ -60,11 +61,18 @@ export function createAtom<T = void>(initValue?: T, debugLabel?: string, callbac
       _subscription.unsubscribe();
       _destination = _factory();
       _subscription = _source.subscribe(_destination);
+
+      // @note: update for $
       _resetter.next(Date.now());
+
+      // @note: initiate value as undefined
+      _value = undefined as T;
+
+      // @note: call init fn again
       _init();
     },
     complete: () => {
-      _source.complete();
+      _destination.complete();
     },
   };
 }

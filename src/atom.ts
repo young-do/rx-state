@@ -66,7 +66,7 @@ export function createAtom<T = void>(initValue?: T, debugLabel?: string, callbac
       _resetter.next(Date.now());
 
       // @note: initiate value as undefined
-      _value = undefined as T;
+      _value = undefined as unknown as T;
 
       // @note: call init fn again
       _init();

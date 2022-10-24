@@ -1,11 +1,11 @@
-import { RxState } from '@youngdo/rx-state';
+import { Atom } from '@youngdo/rx-state';
 import { computed, onMounted, Ref, ref } from 'vue';
 
-export const rxToRef = <T>(rxState$: RxState<T>) => {
-  const _ref = ref(rxState$.value) as Ref<T>;
+export const rxToRef = <T>(atom: Atom<T>) => {
+  const _ref = ref(atom.value) as Ref<T>;
 
   onMounted(() => {
-    const subscription = rxState$.subscribe(value => (_ref.value = value));
+    const subscription = atom.$.subscribe(value => (_ref.value = value));
     return () => subscription.unsubscribe();
   });
 

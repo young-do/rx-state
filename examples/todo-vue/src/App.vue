@@ -1,7 +1,7 @@
 <script lang="ts">
-import { dispatch, logSnapshot, setLogLevel } from '@youngdo/rx-state';
+import { logSnapshot, setLogLevel } from '@youngdo/rx-state';
 import { defineComponent } from 'vue';
-import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './store/action';
+import { ADD_TODO, CHANGE_TODO_LIST_STATUS, DELETE_TODO_LIST } from './store/action';
 import { Todo, todoList$ } from './store/states';
 import { rxToRef } from './utils';
 
@@ -25,28 +25,26 @@ export default defineComponent({
   methods: {
     addTodo() {
       if (this.text) {
-        dispatch(AddTodo(this.text));
+        ADD_TODO(this.text);
         this.text = '';
       }
     },
     changeTodoStatus(todo: Todo) {
       const { id, status } = todo;
       const nextStatus = status === 'active' ? 'completed' : 'active';
-      dispatch(ChangeTodoListStatus([{ id, status: nextStatus }]));
+      CHANGE_TODO_LIST_STATUS([{ id, status: nextStatus }]);
     },
     changeAllCompleted() {
-      dispatch(
-        ChangeTodoListStatus(
-          this.todoList.filter(todo => todo.status === 'active').map(todo => ({ id: todo.id, status: 'completed' })),
-        ),
+      CHANGE_TODO_LIST_STATUS(
+        this.todoList.filter(todo => todo.status === 'active').map(todo => ({ id: todo.id, status: 'completed' })),
       );
     },
     deleteTodo(id: number) {
-      dispatch(DeleteTodoList([id]));
+      DELETE_TODO_LIST([id]);
     },
     deleteAllCompleted() {
       const idList = this.todoList.filter(todo => todo.status === 'completed').map(todo => todo.id);
-      dispatch(DeleteTodoList(idList));
+      DELETE_TODO_LIST(idList);
     },
     changeFilterByHash() {
       const hash = location.hash;
@@ -69,7 +67,7 @@ export default defineComponent({
 <template>
   <section class="todoapp">
     <header class="header">
-      <h1>todos</h1>
+      <h1>todos(vue)</h1>
       <input class="new-todo" placeholder="What needs to be done?" v-model="text" @keypress.enter="addTodo" />
     </header>
     <section class="main">

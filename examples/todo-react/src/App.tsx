@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRxValue } from './hooks/useRxState';
 import { Todo, todoList$ } from './store/states';
-import { dispatch } from '@youngdo/rx-state';
-import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './store/action';
+import { ADD_TODO, CHANGE_TODO_LIST_STATUS, DELETE_TODO_LIST } from './store/action';
 
 function App() {
   const [text, setText] = useState('');
@@ -15,27 +14,25 @@ function App() {
 
   const addTodo = () => {
     if (text) {
-      dispatch(AddTodo(text));
+      ADD_TODO(text);
       setText('');
     }
   };
   const changeTodoStatus = (id: number, status: Todo['status']) => () => {
     const nextStatus = status === 'active' ? 'completed' : 'active';
-    dispatch(ChangeTodoListStatus([{ id, status: nextStatus }]));
+    CHANGE_TODO_LIST_STATUS([{ id, status: nextStatus }]);
   };
   const changeAllCompleted = () => {
-    dispatch(
-      ChangeTodoListStatus(
-        todoList$.value.filter(todo => todo.status === 'active').map(todo => ({ id: todo.id, status: 'completed' })),
-      ),
+    CHANGE_TODO_LIST_STATUS(
+      todoList$.value.filter(todo => todo.status === 'active').map(todo => ({ id: todo.id, status: 'completed' })),
     );
   };
   const deleteTodo = (id: number) => () => {
-    dispatch(DeleteTodoList([id]));
+    DELETE_TODO_LIST([id]);
   };
   const deleteAllCompleted = () => {
     const idList = todoList$.value.filter(todo => todo.status === 'completed').map(todo => todo.id);
-    dispatch(DeleteTodoList(idList));
+    DELETE_TODO_LIST(idList);
   };
 
   useEffect(() => {
@@ -50,7 +47,7 @@ function App() {
   return (
     <section className="todoapp">
       <header className="header">
-        <h1>todos</h1>
+        <h1>todos(react)</h1>
         <input
           className="new-todo"
           placeholder="What needs to be done?"

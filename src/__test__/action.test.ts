@@ -10,7 +10,7 @@ describe('action test', () => {
           expect(payload).toBeUndefined();
           done();
         });
-        action.dispatch();
+        action();
       }));
 
     it('works, when action payload is undefined', () =>
@@ -20,7 +20,7 @@ describe('action test', () => {
           expect(payload).toBeUndefined();
           done();
         });
-        action.dispatch(undefined);
+        action(undefined);
       }));
   });
 
@@ -33,7 +33,7 @@ describe('action test', () => {
           expect(payload).toBe(received);
           done();
         });
-        action.dispatch(payload);
+        action(payload);
       }));
 
     it('works, when dispatch action tuple', () =>
@@ -44,7 +44,7 @@ describe('action test', () => {
           expect(payload).toBe(received);
           done();
         });
-        action.dispatch(payload);
+        action(payload);
       }));
   });
 
@@ -55,7 +55,7 @@ describe('action test', () => {
         const s1 = action.$.subscribe();
 
         // dispatch 1
-        action.dispatch(1);
+        action(1);
         // unsubscribe s1
         s1.unsubscribe();
 
@@ -67,7 +67,7 @@ describe('action test', () => {
         });
 
         // dispatch 2
-        action.dispatch(2);
+        action(2);
         expect(s2.closed).toBe(false);
       }));
   });

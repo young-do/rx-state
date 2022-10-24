@@ -1,5 +1,5 @@
 import { Subject, Observable, startWith, switchMap, ReplaySubject } from 'rxjs';
-import { getDefaultLabel, logging } from './logger';
+import { getDefaultLabel, logForAtom } from './logger';
 
 export type Atom<T = void> = {
   $: Observable<T>;
@@ -8,28 +8,39 @@ export type Atom<T = void> = {
   update: (updater: (prev: T) => T) => void;
   reset: () => void;
   complete: () => void;
+  subscribe: (subscriber?: Subscriber<T>) => UnSubscriber;
 };
 
-export function createAtom<T = void>(initValue?: T, debugLabel?: string, callback?: () => void | Function): Atom<T> {
+type Callback = () => void | CleanupFn | Promise<void | CleanupFn>;
+type CleanupFn = () => void | Promise<void>;
+type Subscriber<T> = (value: T) => void;
+type UnSubscriber = () => void;
+
+export function createAtom<T = void>(initValue?: T, debugLabel?: string, callback?: Callback): Atom<T> {
   const _factory = () => new ReplaySubject<T>(1);
   const _resetter = new Subject<number>();
   const _source = new Subject<T>();
   const _debugLabel = debugLabel || getDefaultLabel();
+  const _observable = _resetter.asObservable().pipe(
+    startWith(null),
+    switchMap(() => _destination),
+  );
 
   let _destination = _factory();
   let _subscription = _source.subscribe(_destination);
   let _value: T;
 
   const _init = () => {
-    _source.subscribe(logging('atom', _debugLabel));
-
     if (initValue !== undefined) {
       _set(initValue);
     }
     if (callback) {
       Promise.resolve().then(() => {
-        const cleanup = callback();
-        _destination.subscribe({ complete: () => cleanup?.() });
+        Promise.resolve(callback()).then(cleanup => {
+          _subscription.add(() => {
+            cleanup?.();
+          });
+        });
       });
     }
   };
@@ -39,24 +50,26 @@ export function createAtom<T = void>(initValue?: T, debugLabel?: string, callbac
     _source.next(value);
   };
 
+  _source.subscribe(next => logForAtom(_debugLabel, _value, next));
   _init();
 
   return {
     get $() {
-      return _resetter.asObservable().pipe(
-        startWith(null),
-        switchMap(() => _destination),
-      );
+      return _observable;
     },
+
     get value() {
       return _value;
     },
-    set: (value: T) => {
+
+    set: value => {
       _set(value);
     },
-    update: (updater: (prev: T) => T) => {
+
+    update: updater => {
       _set(updater(_value));
     },
+
     reset: () => {
       _subscription.unsubscribe();
       _destination = _factory();
@@ -71,8 +84,14 @@ export function createAtom<T = void>(initValue?: T, debugLabel?: string, callbac
       // @note: call init fn again
       _init();
     },
+
     complete: () => {
-      _destination.complete();
+      _subscription.unsubscribe();
+    },
+
+    subscribe: subscriber => {
+      const subscription = _observable.subscribe(value => subscriber?.(value));
+      return () => subscription.unsubscribe();
     },
   };
 }

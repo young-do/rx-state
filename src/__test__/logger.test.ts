@@ -1,6 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { setLogLevel, logSnapshot, logging } from '../logger';
-// import { logForAtom, logForAction } from '../src/utils/logger';
+import { setLogLevel, logForAction, logForAtom, logSnapshot } from '../logger';
 
 describe('logger test', () => {
   describe('when log level is none', () => {
@@ -12,10 +11,16 @@ describe('logger test', () => {
       const log = vi.fn();
       console.log = log;
 
-      logging('test', 'test')(null);
+      logForAction('test', null);
       expect(log).not.toBeCalled();
 
-      logging('test', '#test')(null);
+      logForAction('#test', null);
+      expect(log).not.toBeCalled();
+
+      logForAtom('test', null);
+      expect(log).not.toBeCalled();
+
+      logForAtom('#test', null);
       expect(log).not.toBeCalled();
     });
 
@@ -34,13 +39,20 @@ describe('logger test', () => {
     it('console.log is not called, when label starts with #', () => {
       console.log = vi.fn();
 
-      logging('test', '#test')(null);
+      logForAction('#test', null);
+      expect(console.log).not.toBeCalled();
+
+      logForAtom('#test', null);
       expect(console.log).not.toBeCalled();
     });
 
     it('console.log is called, when label does not start with #', () => {
       console.log = vi.fn();
-      logging('test', 'test')(null);
+      logForAction('test', null);
+      expect(console.log).toBeCalled();
+
+      console.log = vi.fn();
+      logForAtom('test', null);
       expect(console.log).toBeCalled();
     });
 
@@ -58,11 +70,19 @@ describe('logger test', () => {
 
     it('console.log is called, whenever or not label starts with #', () => {
       console.log = vi.fn();
-      logging('test', 'test')(null);
+      logForAction('test', null);
       expect(console.log).toBeCalled();
 
       console.log = vi.fn();
-      logging('test', '#test')(null);
+      logForAction('#test', null);
+      expect(console.log).toBeCalled();
+
+      console.log = vi.fn();
+      logForAtom('test', null);
+      expect(console.log).toBeCalled();
+
+      console.log = vi.fn();
+      logForAtom('#test', null);
       expect(console.log).toBeCalled();
     });
 

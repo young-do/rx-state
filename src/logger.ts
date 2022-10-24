@@ -1,18 +1,28 @@
 export type LogLevel = 'all' | 'named' | 'none';
 
 const PREFIX_PRIVATE = '#';
-const snapshot: Record<string, Record<string, unknown>> = {};
+const snapshot = {
+  actions: Object.create(null) as Record<string, any>,
+  atoms: Object.create(null) as Record<string, any>,
+};
 
 let logLevel: LogLevel = 'none';
 
-export const logging =
-  <T>(field: string, debugLabel: string) =>
-  (payload: T) => {
-    if (!snapshot[field]) snapshot[field] = {};
-    snapshot[field][debugLabel] = payload;
-    if (skipLogging(debugLabel)) return;
-    console.log(`[${field}:${debugLabel}]`, payload);
-  };
+export const logForAction = <T = any>(label: string, payload: T) => {
+  snapshot.actions[label] = payload;
+
+  if (skipLogging(label)) return;
+
+  console.log(`[rx-state:action] \x1b[94m${label}`, payload);
+};
+
+export const logForAtom = <T = any>(label: string, prev?: T, curr?: T) => {
+  snapshot.atoms[label] = { prev, curr };
+
+  if (skipLogging(label)) return;
+
+  console.log(`[rx-state:atom] \x1b[35m${label}`, prev, '→', curr);
+};
 
 export const setLogLevel = (level: LogLevel) => {
   logLevel = level;

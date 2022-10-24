@@ -1,7 +1,7 @@
 <script lang="ts">
-import { dispatch, logSnapshot, setLogLevel } from '@youngdo/rx-state';
+import { logSnapshot, setLogLevel } from '@youngdo/rx-state';
 import { onMount } from 'svelte';
-import { AddTodo, ChangeTodoListStatus, DeleteTodoList } from './store/action';
+import { ADD_TODO, CHANGE_TODO_LIST_STATUS, DELETE_TODO_LIST } from './store/action';
 import { Todo, todoList$ } from './store/states';
 
 let text: string = '';
@@ -17,27 +17,25 @@ const handleKeydown = (e: KeyboardEvent) => {
 };
 const addTodo = () => {
   if (text) {
-    dispatch(AddTodo(text));
+    ADD_TODO(text);
     text = '';
   }
 };
 const changeTodoStatus = (id: number, status: Todo['status']) => () => {
   const nextStatus = status === 'active' ? 'completed' : 'active';
-  dispatch(ChangeTodoListStatus([{ id, status: nextStatus }]));
+  CHANGE_TODO_LIST_STATUS([{ id, status: nextStatus }]);
 };
 const changeAllCompleted = () => {
-  dispatch(
-    ChangeTodoListStatus(
+  CHANGE_TODO_LIST_STATUS(
       todoList$.value.filter(todo => todo.status === 'active').map(todo => ({ id: todo.id, status: 'completed' })),
-    ),
-  );
+    )
 };
 const deleteTodo = (id: number) => () => {
-  dispatch(DeleteTodoList([id]));
+  DELETE_TODO_LIST([id]);
 };
 const deleteAllCompleted = () => {
   const idList = todoList$.value.filter(todo => todo.status === 'completed').map(todo => todo.id);
-  dispatch(DeleteTodoList(idList));
+  DELETE_TODO_LIST(idList);
 };
 
 onMount(() => {

@@ -1,21 +1,12 @@
 export type LogLevel = 'all' | 'named' | 'none';
 
-let logLevel: LogLevel = 'none';
-
+const PREFIX_PRIVATE = '#';
 const snapshot = {
   actions: Object.create(null) as Record<string, any>,
   atoms: Object.create(null) as Record<string, any>,
 };
 
-const skipLogging = (label: string): boolean => {
-  if (logLevel === 'none') return true;
-  if (logLevel === 'named' && label.startsWith('#')) return true;
-  return false;
-};
-
-export const setLogLevel = (level: LogLevel) => {
-  logLevel = level;
-};
+let logLevel: LogLevel = 'none';
 
 export const logForAction = <T = any>(label: string, payload: T) => {
   snapshot.actions[label] = payload;
@@ -33,12 +24,20 @@ export const logForAtom = <T = any>(label: string, prev?: T, curr?: T) => {
   console.log(`[rx-state:atom] \x1b[35m${label}`, prev, '→', curr);
 };
 
+export const setLogLevel = (level: LogLevel) => {
+  logLevel = level;
+};
+
 export const logSnapshot = () => {
   console.log('[rx-state:snapshot]', snapshot);
 };
 
-export const logWarn = (label: string, message: string) => {
-  if (skipLogging(label)) return;
+export const getDefaultLabel = () => {
+  return PREFIX_PRIVATE + Math.random().toString(36).substr(2, 11);
+};
 
-  console.warn(`[rx-state:warn] ${message}`);
+const skipLogging = (label: string): boolean => {
+  if (logLevel === 'none') return true;
+  if (logLevel === 'named' && label.startsWith(PREFIX_PRIVATE)) return true;
+  return false;
 };

@@ -1,6 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { setLogLevel, logSnapshot } from '../src';
-import { logForAtom, logForAction } from '../src/utils/logger';
+import { setLogLevel, logForAction, logForAtom, logSnapshot } from '../logger';
 
 describe('logger test', () => {
   describe('when log level is none', () => {

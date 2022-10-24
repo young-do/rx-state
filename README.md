@@ -7,8 +7,8 @@ State management library by using [Rxjs](https://github.com/ReactiveX/rxjs), and
 ### install
 
 ```
-npm install @youngdo/rx-state
-yarn add @youngdo/rx-state
+npm install @youngdo/rx-state rxjs
+yarn add @youngdo/rx-state rxjs
 ```
 
 ## Example (Simple Counter)
@@ -23,15 +23,15 @@ export const INCREASE = createAction<void>();
 export const DECREASE = createAction<void>();
 
 // state.ts
-import { atom, on } from '@youngdo/rx-state';
+import { createAtom } from '@youngdo/rx-state';
 
-export const count$ = atom<number>(0, 'count$', count$ => {
-  on(INCREASE).subscribe(() => count$.set(count$.value + 1));
-  on(DECREASE).subscribe(() => count$.set(count$.value - 1));
+export const count$ = createAtom<number>(0, 'count$', count$ => {
+  INCREASE.$.subscribe(() => count$.set(count$.value + 1));
+  DECREASE.$.subscribe(() => count$.set(count$.value - 1));
 
   // // or use 'update'
-  // on(INCREASE).subscribe(() => count$.update(prev => prev + 1));
-  // on(DECREASE).subscribe(() => count$.update(prev => prev - 1));
+  // INCREASE.$.subscribe(() => count$.update(prev => prev + 1));
+  // DECREASE.$.subscribe(() => count$.update(prev => prev - 1));
 });
 ```
 
@@ -40,8 +40,6 @@ export const count$ = atom<number>(0, 'count$', count$ => {
 💡 `useRxState` code at [here](./examples/todo-react/src/hooks/useRxState.ts).
 
 ```jsx
-import { dispatch } from '@youngdo/rx-state';
-
 import { count$ } from 'state';
 import { INCREASE, DECREASE } from 'action';
 import { useRxValue } from 'hooks';
@@ -49,8 +47,8 @@ import { useRxValue } from 'hooks';
 function App() {
   const count = useRxValue(count$);
 
-  const increase = () => dispatch(INCREASE);
-  const decrease = () => dispatch(DECREASE);
+  const increase = () => INCREASE();
+  const decrease = () => DECREASE();
 
   return (
     <div>
@@ -66,13 +64,11 @@ function App() {
 
 ```html
 <script>
-  import { dispatch } from '@youngdo/rx-state';
-
   import { count$ } from 'state';
   import { INCREASE, DECREASE } from 'action';
 
-  const increase = () => dispatch(INCREASE);
-  const decrease = () => dispatch(DECREASE);
+  const increase = () => INCREASE();
+  const decrease = () => DECREASE();
 </script>
 
 <div>
@@ -88,7 +84,6 @@ function App() {
 
 ```vue
 <script>
-import { dispatch } from '@youngdo/rx-state';
 import { defineComponent } from 'vue';
 
 import { count$ } from 'state';
@@ -103,10 +98,10 @@ export default defineComponent({
   },
   methods: {
     increase() {
-      dispatch(INCREASE);
+      INCREASE();
     },
     decrease() {
-      dispatch(DECREASE);
+      DECREASE();
     },
   },
 });

@@ -46,11 +46,13 @@ export function createAtom<T = void>(initValue?: T, debugLabel?: string, callbac
   };
   const _set = (value: T) => {
     if (_value === value) return;
+
+    logForAtom(_debugLabel, _value, value);
+
     _value = value;
     _source.next(value);
   };
 
-  _source.subscribe(next => logForAtom(_debugLabel, _value, next));
   _init();
 
   return {

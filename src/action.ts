@@ -37,8 +37,8 @@ export function createAction<T = void>(debugLabel?: string): Action<T> {
 }
 
 export function dispatch<T = void>(ActionTuple: ActionTuple<T>): void;
-export function dispatch<T = void>(action: Action<T>, payload: T): void;
-export function dispatch<T extends void>(action: Action<T>): void;
+export function dispatch<T = void>(action: Action<T>, payload: T extends void ? never : T): void;
+export function dispatch<T = void>(action: Action<T>): void;
 export function dispatch<T = void>(actionOrActionTuple: Action<T> | ActionTuple<T>, payload?: T) {
   const isAction = typeof actionOrActionTuple === 'function';
 
